@@ -18,12 +18,6 @@ def load_data():
 movies_df, similarity = load_data()
 
 
-# Function to fetch full poster URL
-def fetch_poster(poster_path):
-    if pd.notna(poster_path):
-        return poster_path
-    return None
-
 # Recommendation function
 def recommend(movie):
     recommended_movies = []
@@ -42,7 +36,7 @@ def recommend(movie):
 
         recommended_movies.append({
             "title": movie_data.title,
-            "poster": fetch_poster(movie_data.poster_path)
+            "poster": movie_data.poster_path
         })
 
     return recommended_movies
