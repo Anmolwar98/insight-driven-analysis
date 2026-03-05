@@ -75,6 +75,7 @@ if st.button("🔍 Recommend Movies"):
             st.markdown(f"**{movie['title']}**")
 
             if movie["poster"]:
+                st.write(f'Movies poster URL: -------- {movie["poster"]}')
                 st.image(movie["poster"], use_container_width=True)
             else:
                 st.write("Poster not available")
