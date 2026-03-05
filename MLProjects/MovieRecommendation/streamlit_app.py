@@ -17,12 +17,24 @@ def recommend(movie):
     recommended_movies = []
     movie_index = movies_df[movies_df['title'] == movie].index[0]
     distances = similarity[movie_index]
-    movies_lst = sorted(list(enumerate(distances)),reverse=True,key=lambda x: x[1])[1:6]
+
+    movies_lst = sorted(
+        list(enumerate(distances)),
+        reverse=True,
+        key=lambda x: x[1]
+    )[1:6]
 
     for i in movies_lst:
+        poster_path = movies_df.iloc[i[0]].poster_path
+        
+        if pd.notna(poster_path):
+            poster_url = "https://image.tmdb.org/t/p/w500" + poster_path
+        else:
+            poster_url = None
+
         recommended_movies.append({
             "title": movies_df.iloc[i[0]].title,
-            "poster": movies_df.iloc[i[0]].poster_path if "poster_path" in movies_df.columns else None
+            "poster": poster_url
         })
 
     return recommended_movies
