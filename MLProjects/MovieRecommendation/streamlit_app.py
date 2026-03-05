@@ -1,13 +1,16 @@
 import streamlit as st
 import pickle
 import pandas as pd
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Page config
 st.set_page_config(page_title="Movie Recommender", layout="wide")
 
 # Load data
-movies_df = pickle.load(open('models/movies.pkl', 'rb'))
-similarity = pickle.load(open('models/similarity.pkl', 'rb'))
+movies_df = pickle.load(open(os.path.join(BASE_DIR, "movies.pkl"), "rb"))
+similarity = pickle.load(open(os.path.join(BASE_DIR, "similarity.pkl"), "rb"))
 
 # Recommendation function
 def recommend(movie):
