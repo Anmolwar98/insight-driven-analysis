@@ -20,10 +20,9 @@ movies_df, similarity = load_data()
 
 # Function to fetch full poster URL
 def fetch_poster(poster_path):
-    if pd.notna(poster_path) and poster_path != "":
-        return f"https://image.tmdb.org/t/p/w500{poster_path}"
+    if pd.notna(poster_path):
+        return poster_path
     return None
-
 
 # Recommendation function
 def recommend(movie):
@@ -78,4 +77,4 @@ if st.button("🔍 Recommend Movies"):
                 st.write(f'Movies poster URL: -------- {movie["poster"]}')
                 st.image(movie["poster"], use_container_width=True)
             else:
-                st.write("Poster not available")
+                st.image("https://via.placeholder.com/300x450?text=No+Poster")
