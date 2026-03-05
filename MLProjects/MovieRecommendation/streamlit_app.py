@@ -2,6 +2,9 @@ import streamlit as st
 import pickle
 import pandas as pd
 import os
+import requests
+from PIL import Image
+from io import BytesIO
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -68,7 +71,11 @@ if st.button("🔍 Recommend Movies"):
             st.markdown(f"**{movie['title']}**")
 
             if movie["poster"]:
-                st.write(f'Movies poster URL: -------- {movie["poster"]}')
-                st.image(movie["poster"], use_container_width=True)
+                try:
+                    response = requests.get(movie["poster"], timeout=5)
+                    img = Image.open(BytesIO(response.content))
+                    st.image(img, use_container_width=True)
+                except:
+                    st.write("Poster not available")
             else:
                 st.image("https://via.placeholder.com/300x450?text=No+Poster")
