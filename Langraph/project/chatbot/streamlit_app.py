@@ -1,12 +1,54 @@
 import streamlit as st
-from langraph_backend import bot, CONFIG
+from langraph_backend import bot
 from langchain_core.messages import HumanMessage
+from utilities import generate_thread_id, reset_chat_window, add_thread, load_conversation
 
-message_history = st.session_state  # it is a dictionary which retained the conversation history
-CONFIG = {'configurable':{'thread_id':"random_id"}}
+
+#************************************Session Setup************************************
 
 if 'message_history' not in st.session_state:
     st.session_state['message_history'] = []
+
+if 'thread_id' not in st.session_state:
+    st.session_state['thread_id'] = generate_thread_id()
+
+if 'chat_threads' not in st.session_state:
+    st.session_state['chat_threads']=[]
+
+add_thread(st.session_state['thread_id'])
+
+
+#************************************ Sidebar UI************************************
+if st.sidebar.button('Start New Conversation'):
+    reset_chat_window()
+
+st.sidebar.header('Chat History')
+
+for thread_id in st.session_state['chat_threads'][::-1]:
+    # Load the first message to show as preview
+    messages = load_conversation(thread_id)
+    preview_text = "New Conversation"
+    
+    if messages:
+        # Get the first message content
+        first_msg = messages[0].content if hasattr(messages[0], 'content') else str(messages[0])
+        # Show first 40 characters of the message
+        preview_text = first_msg[:30] + "..." if len(first_msg) > 30 else first_msg
+    
+    if st.sidebar.button(preview_text, key=thread_id):
+        st.session_state['thread_id']=thread_id
+        messages = load_conversation(thread_id)
+
+        temp_message = []
+        for msg in messages:
+            if isinstance(msg, HumanMessage):
+                role = 'user'
+            else:
+                role = 'ai'
+            temp_message.append({'role':'role','content':msg.content})
+        st.session_state['message_history'] = temp_message
+
+#************************************Main UI Code************************************
 
 ## Loading the conversation
 for message in st.session_state['message_history']:
@@ -15,6 +57,9 @@ for message in st.session_state['message_history']:
 
 ## User Input Box
 user_input = st.chat_input('Type Here')
+
+CONFIG = {'configurable':{'thread_id':st.session_state['thread_id']}}
+
 
 if user_input:
     ## Appending the user input into a Dictionary

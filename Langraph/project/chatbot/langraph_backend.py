@@ -3,11 +3,11 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START, END
 from dotenv import load_dotenv
 from typing import TypedDict, Annotated
-from langchain_core.messages import BaseMessage
+from langchain_core.messages import BaseMessage, HumanMessage
 from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import InMemorySaver
+import streamlit as st
 import os
-CONFIG = {'configurable':{'thread_id':"random_id"}}
 
 # Load env properties
 load_dotenv()
@@ -48,3 +48,8 @@ checkpointer = InMemorySaver()
 ## graph compile
 bot = graph.compile(checkpointer=checkpointer)
 
+response = bot.invoke(
+    {'messages':[HumanMessage(content='Hi my name is anuj')]},
+    config={'configurable':{'thread_id':'random'}}
+)
+print(bot.get_state(config={'configurable':{'thread_id':'random'}}).values['messages'])
